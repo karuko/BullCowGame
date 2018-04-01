@@ -14,7 +14,7 @@ using int32 = int;
 
 void PrintIntro();
 void PlayGame();
-FText GetGuess();
+FText GetValidGuess();
 bool AskToPlayAgain();
 
 FBullCowGame BCGame; // instantiate a new game
@@ -35,7 +35,7 @@ int main()
 
 void PrintIntro() {
 	//introduce the game
-	constexpr int32 WORLD_LENGTH = 5;
+	const int32 WORLD_LENGTH = BCGame.getHiddenWordLength();
 	std::cout << "Welcome to Bulls and Cows" << std::endl;
 	std::cout << "Can you guess the " << WORLD_LENGTH;
 	std::cout << " letter isogram I'm thinking of?\n " << std::endl;
@@ -48,29 +48,50 @@ void PlayGame()
 	int32 maxTries = BCGame.getMaxTries();
 
 	//loop for the number of turns asking for guesses
-	// TODO change from FOR to WHILE loop once we are validating tries
+
 	for (int32 i = 0; i < maxTries; i++)
-	{
-		FText guess = GetGuess(); //TODO make loop checking valid 
+	{ 	// TODO change from FOR to WHILE
+		FText guess = GetValidGuess();
 
-		// submit valid guess to the game
-		// print number of bulls and cows
+		// submit valid guess to the game and receive the counts
+		FBullCowCount bullCowCount = BCGame.SubmitGuess(guess);
+		
+		std::cout << "Bulls = " << bullCowCount.Bulls << " ";
+		std::cout << "Cows = " << bullCowCount.Cows << "\n\n";
 
-		std::cout << "Guess: " << guess << std::endl;
-		std::cout << std::endl;
 	}
 	//TODO add a game summary
 
 }
 
-FText GetGuess() {
-	//get a guess from the player
-	int32 currentTry = BCGame.getCurrentTry();
-	std::cout << "Try " << currentTry << ". Enter your guess: ";
-	FText Guess = "";
-	std::getline(std::cin, Guess);
+// loop continually until the user gives a valid guess
+FText GetValidGuess() { 
+	EWordStatus Status = EWordStatus::Invalid_Status;
 
-	return Guess;
+	do {
+		int32 currentTry = BCGame.getCurrentTry();
+		std::cout << "Try " << currentTry << ". Enter your guess: ";
+		FText Guess = "";
+		std::getline(std::cin, Guess);
+
+		EWordStatus Status = BCGame.checkGuessValidity(Guess);
+		switch (Status)
+		{
+		case EWordStatus::Wrong_Length:
+			std::cout << "Please enter a " << BCGame.getHiddenWordLength() << " letter word.\n";
+			break;
+		case EWordStatus::Not_Isogram:
+			std::cout << "Please enter a word without repeating letters.\n";
+			break;
+		case EWordStatus::Not_Lowercase:
+			std::cout << "Please enter the word in lowercase.\n";
+			break;
+
+		default:
+			return Guess;
+		}
+		std::cout << std::endl;
+	} while (Status != EWordStatus::OK); //Keep looping until we get no errors
 
 }
 
