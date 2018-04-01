@@ -5,22 +5,28 @@ FBullCowGame::FBullCowGame() { reset(); }
 int32 FBullCowGame::getMaxTries() const { return myMaxTries; }
 int32 FBullCowGame::getCurrentTry() const { return myCurrentTry; }
 int32 FBullCowGame::getHiddenWordLength() const { return myHiddenWord.length(); }
+int32 FBullCowGame::getBullCount() const { return bullCount; }
 
 void FBullCowGame::reset()
 {
 	constexpr int32 MAX_TRIES = 8;
 	myMaxTries = MAX_TRIES;
 
-	const FString HIDDEN_WORD = "planet"; //constexpr is too strong here.
+	const FString HIDDEN_WORD = "ant"; //constexpr is too strong here.
 	myHiddenWord = HIDDEN_WORD;
-
+	
 	myCurrentTry = 1;
+	bullCount = 0;
 	return;
 }
 
+
 bool FBullCowGame::isGameWon() const
 {
-	return false;
+	if (getBullCount() == myHiddenWord.length()) {
+		return true;
+	}
+	else { return false; }
 }
 
 EWordStatus FBullCowGame::checkGuessValidity(FString Guess) const
@@ -45,20 +51,18 @@ EWordStatus FBullCowGame::checkGuessValidity(FString Guess) const
 }
 
 // receives a VALID guess, increments turn, and returns count
-FBullCowCount FBullCowGame::SubmitGuess(FString Guess)
+FBullCowCount FBullCowGame::SubmitValidGuess(FString Guess)
 {
-	// increment the turn number
 	myCurrentTry++;
-	// setup a return variable
 	FBullCowCount BullCowCount;
-
-	// loop through all letters in the guess
-	int32 hiddenWordLenght = getHiddenWordLength();
-	for (int32 i = 0; i < hiddenWordLenght; i++) {
-		//compare letters against the hidden word
-		for (int32 j = 0; j < hiddenWordLenght; j++) {
+	int32 wordLenght = getHiddenWordLength(); // assuming same length as guess
+	
+	// loop through all letters in the hidden word
+	for (int32 i = 0; i < wordLenght; i++) {
+		//compare letters against the guess
+		for (int32 j = 0; j < wordLenght; j++) {
 			//if they match then
-			if (Guess[i] == myHiddenWord[j]) {
+			if (Guess[j] == myHiddenWord[i]) {
 				if (i == j) {
 					BullCowCount.Bulls++;
 				}
@@ -69,6 +73,6 @@ FBullCowCount FBullCowGame::SubmitGuess(FString Guess)
 		
 	}
 		
-
+	bullCount = BullCowCount.Bulls;
 	return BullCowCount;
 }
