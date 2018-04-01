@@ -14,6 +14,7 @@ using int32 = int;
 
 void PrintIntro();
 void PlayGame();
+void PrintGameSummary();
 FText GetValidGuess();
 bool AskToPlayAgain();
 
@@ -51,7 +52,7 @@ void PlayGame()
 	// and there are still tries remaining
 
 	while (!BCGame.isGameWon() && BCGame.getCurrentTry() <= maxTries)
-	{ 	// TODO change from FOR to WHILE
+	{ 
 		FText guess = GetValidGuess();
 
 		// submit valid guess to the game and receive the counts
@@ -61,8 +62,21 @@ void PlayGame()
 		std::cout << "Cows = " << bullCowCount.Cows << "\n\n";
 
 	}
-	//TODO add a game summary
-	std::cout << "Congrats you win! \n";
+
+	PrintGameSummary();
+	return;
+
+}
+
+void PrintGameSummary()
+{
+	if (BCGame.isGameWon())
+	{
+		std::cout << "DAMN IT you win \n";
+	}
+	else {
+		std::cout << "YOU ARE A STUPID PLAYER. I WIN THIS TIME :D \n";
+	}
 
 }
 

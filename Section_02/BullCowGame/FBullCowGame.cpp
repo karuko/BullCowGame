@@ -1,11 +1,13 @@
 #include "FBullCowGame.h"
+#include <map>
+#define TMap std::map
 
 FBullCowGame::FBullCowGame() { reset(); }
 
 int32 FBullCowGame::getMaxTries() const { return myMaxTries; }
 int32 FBullCowGame::getCurrentTry() const { return myCurrentTry; }
 int32 FBullCowGame::getHiddenWordLength() const { return myHiddenWord.length(); }
-int32 FBullCowGame::getBullCount() const { return bullCount; }
+bool FBullCowGame::isGameWon() const { return bGameIsWon; }
 
 void FBullCowGame::reset()
 {
@@ -16,28 +18,20 @@ void FBullCowGame::reset()
 	myHiddenWord = HIDDEN_WORD;
 	
 	myCurrentTry = 1;
-	bullCount = 0;
+	bGameIsWon = false;
 	return;
 }
 
 
-bool FBullCowGame::isGameWon() const
-{
-	if (getBullCount() == myHiddenWord.length()) {
-		return true;
-	}
-	else { return false; }
-}
-
 EWordStatus FBullCowGame::checkGuessValidity(FString Guess) const
 {
-	if (false) // if the guess isn't an isogram, 
+	if (!IsIsogram(Guess)) // if the guess isn't an isogram, 
 	{
-		return EWordStatus::Not_Isogram;
+		return EWordStatus::Not_Isogram; //TODO write function
 	}
-	else if (false) // if the guess isn't all lowercase
+	else if (!IsLowercase(Guess)) // if the guess isn't all lowercase 
 	{
-		return EWordStatus::Not_Lowercase;
+		return EWordStatus::Not_Lowercase; //TODO write function
 	}
 	else if (Guess.length() != getHiddenWordLength()) // if the guess length is wrong
 	{
@@ -73,6 +67,49 @@ FBullCowCount FBullCowGame::SubmitValidGuess(FString Guess)
 		
 	}
 		
-	bullCount = BullCowCount.Bulls;
+	if (BullCowCount.Bulls == wordLenght) {
+		bGameIsWon = true;
+	}
+	else
+	{
+		bGameIsWon = false;
+	}
 	return BullCowCount;
+}
+
+bool FBullCowGame::IsIsogram(FString word) const
+{
+	//treat 0 and 1 letter words as isograms
+	if (word.length() <= 1) { return true; }
+
+	TMap<char, bool> LetterSeen;
+	for (auto letter : word) //for all letters of the word
+	{
+		letter = tolower(letter);
+
+			// if the letter is in the map
+		if (LetterSeen[letter]) {
+			return false; // we do NOT have an isogram
+		}
+		else 
+		{
+			LetterSeen[letter] = true; // add a letter to the map
+		}
+				
+	}
+	
+	return true; // for example in cases where /0 is entered
+}
+
+bool FBullCowGame::IsLowercase(FString word) const
+{
+	for (auto letter : word) {
+		if (letter == '\0' || isspace(letter)) {
+			return false;
+		}
+		else {
+			return true;
+		}
+	}
+	return true;
 }
