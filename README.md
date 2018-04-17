@@ -1,2 +1,3 @@
-# UnrealCourseUdemy
-Learn C++ from scratch. How to make your first video game in Unreal engine. Gain confidence in programming. 
+# BullCowGame from Unreal course
+This game consists in guess an isogram (a word with different letters), user puts a word with the same lenght that the isogram, after the input is written the game shows to the player the number of cows (letters included in the isogram right positioned) and bulls (letters included in the isogram wrong positioned) that contains the input word,  the number of tries to guess the word changes according to the number of letters in the isogram. 
+I have implemented the option to input the word at the beginning of the game, this functionality would allow to play with other player, one player writes the isogram and the other one tries to guess it.
