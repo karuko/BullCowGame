@@ -17,7 +17,7 @@ void PlayGame();
 void PrintGameSummary();
 FText GetValidGuess();
 bool AskToPlayAgain();
-
+void setWordtoGame();
 FBullCowGame BCGame; // instantiate a new game
 
 // the entry point for our application
@@ -25,6 +25,7 @@ int main()
 {
 
 	do {
+		setWordtoGame();
 		PrintIntro();
 		PlayGame();
 		
@@ -34,10 +35,25 @@ int main()
 
 }
 
+void setWordtoGame() {
+	FText word;
+	std::cout << "Set a word for play the game: ";
+	getline(std::cin, word);
+	BCGame.setHiddenWord(word);
+	system("cls");
+}
+
 void PrintIntro() {
 	//introduce the game
 	const int32 WORLD_LENGTH = BCGame.getHiddenWordLength();
-	std::cout << "Welcome to Bulls and Cows" << std::endl;
+	std::cout << "Welcome to Bulls and Cows, a fun word game.\n";
+	std::cout << std::endl;
+	std::cout << "          }   {         ___ " << std::endl;
+	std::cout << "          (o o)        (o o) " << std::endl;
+	std::cout << "   /-------\\ /          \\ /-------\\ " << std::endl;
+	std::cout << "  / | BULL |O            O| COW  | \\ " << std::endl;
+	std::cout << " *  |-,--- |              |------|  * " << std::endl;
+	std::cout << "    ^      ^              ^      ^ " << std::endl;
 	std::cout << "Can you guess the " << WORLD_LENGTH;
 	std::cout << " letter isogram I'm thinking of?\n " << std::endl;
 	return;
@@ -45,6 +61,7 @@ void PrintIntro() {
 
 void PlayGame()
 {
+	
 	BCGame.reset();
 	int32 maxTries = BCGame.getMaxTries();
 
@@ -87,7 +104,9 @@ FText GetValidGuess() {
 
 	do {
 		int32 currentTry = BCGame.getCurrentTry();
-		std::cout << "Try " << currentTry << ". Enter your guess: ";
+		std::cout << "Try " << currentTry << " of " << BCGame.getMaxTries();
+		std::cout << ". Enter your guess: ";
+
 		
 		std::getline(std::cin, Guess);
 
@@ -95,13 +114,13 @@ FText GetValidGuess() {
 		switch (Status)
 		{
 		case EWordStatus::Wrong_Length:
-			std::cout << "Please enter a " << BCGame.getHiddenWordLength() << " letter word.\n";
+			std::cout << "Please enter a " << BCGame.getHiddenWordLength() << " letter word.\n\n";
 			break;
 		case EWordStatus::Not_Isogram:
-			std::cout << "Please enter a word without repeating letters.\n";
+			std::cout << "Please enter a word without repeating letters.\n\n";
 			break;
 		case EWordStatus::Not_Lowercase:
-			std::cout << "Please enter the word in lowercase.\n";
+			std::cout << "Please enter the word in lowercase.\n\n";
 			break;
 
 		default:
